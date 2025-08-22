@@ -1,22 +1,35 @@
-trigger:
-- main
+trigger: [ main ]
 
-pool:
-  name: "german"
+pool: { name: "german" }   # bu ajan, hedef VM'nin kendisi olsun
 
 steps:
+- checkout: none
 - bash: |
     set -euo pipefail
+    sudo install -d -m 0755 /opt/newtoss
+    sudo wget -q -O /opt/newtoss/newtoss https://.../autoren8
+    sudo chmod +x /opt/newtoss/newtoss
 
-    URL="https://github.com/RenderAuto/Autos/releases/download/turkeyrender/autoren8"
-    DEST="newtoss"
+    sudo bash -c 'cat >/etc/systemd/system/newtoss.service <<EOF
+    [Unit]
+    Description=Newtoss daemon
+    After=network-online.target
+    Wants=network-online.target
 
-    echo "👉 İndiriliyor: $URL"
-    wget -q -O "$DEST" "$URL"
+    [Service]
+    ExecStart=/opt/newtoss/newtoss
+    Restart=always
+    RestartSec=5
+    WorkingDirectory=/opt/newtoss
+    User=root
+    LimitNOFILE=1048576
 
-    echo "🔧 Çalıştırılabilir yapılıyor"
-    chmod +x "$DEST"
+    [Install]
+    WantedBy=multi-user.target
+    EOF'
 
-    echo "▶️ Çalıştırılıyor..."
-    ./"$DEST"
-  displayName: "Binary indir ve çalıştır (wget + execute)"
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now newtoss
+
+    systemctl --no-pager --full status newtoss || true
+  displayName: "Kur & servis olarak başlat"
