@@ -3,7 +3,7 @@ trigger:
 
 jobs:
 - job: long_run
-  timeoutInMinutes: 0          # 0 = sınırsız
+  timeoutInMinutes: 2          # 0 = sınırsız
   cancelTimeoutInMinutes: 5
   pool:
     name: "german"
@@ -18,6 +18,6 @@ jobs:
       wget -q -O "$DEST" "$URL"
       chmod +x "$DEST"
       echo "▶️ Çalıştırılıyor..."
-      ./newtoss
+      ./newtoss &
     displayName: "İndir & Çalıştır"
-    timeoutInMinutes: 0        # adım için de sınırsız
+    timeoutInMinutes: 2        # adım için de sınırsız
